@@ -1,0 +1,346 @@
+/* IntroAnimation.css */
+
+.intro-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 99999; /* Ensure it is above everything */
+  background: linear-gradient(135deg, #FFFFFF 0%, #EAF4FF 35%, #DDEBFF 70%, #DFF8F5 100%);
+  background-size: 200% 200%;
+  animation: intro-bg-move 12s ease-in-out infinite alternate;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+@keyframes intro-bg-move {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+
+/* Background Elements */
+.bg-decorations {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Glowing soft circles */
+.bg-glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.35;
+  mix-blend-mode: multiply;
+}
+
+.bg-glow-1 {
+  width: 500px;
+  height: 500px;
+  background-color: #DFF8F5; /* Light Teal */
+  top: -10%;
+  left: -10%;
+  animation: intro-float-circle-1 25s ease-in-out infinite alternate;
+}
+
+.bg-glow-2 {
+  width: 600px;
+  height: 600px;
+  background-color: #EAF4FF; /* Soft Blue */
+  bottom: -15%;
+  right: -10%;
+  animation: intro-float-circle-2 30s ease-in-out infinite alternate;
+}
+
+.bg-glow-3 {
+  width: 400px;
+  height: 400px;
+  background-color: #DDEBFF; /* Very Light Blue */
+  top: 40%;
+  left: 60%;
+  animation: intro-float-circle-3 20s ease-in-out infinite alternate;
+}
+
+@keyframes intro-float-circle-1 {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(80px, 60px) scale(1.1); }
+}
+
+@keyframes intro-float-circle-2 {
+  0% { transform: translate(0, 0) scale(1.1); }
+  100% { transform: translate(-100px, -80px) scale(0.9); }
+}
+
+@keyframes intro-float-circle-3 {
+  0% { transform: translate(0, 0) scale(0.9); }
+  100% { transform: translate(-50px, 80px) scale(1.05); }
+}
+
+/* Floating plus (+) medical symbols */
+.floating-plus {
+  position: absolute;
+  fill: #3150B8;
+  opacity: 0.05;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
+  animation-direction: alternate;
+}
+
+.fp-1 {
+  top: 15%;
+  left: 10%;
+  width: 24px;
+  height: 24px;
+  animation: intro-float-plus-1 14s infinite alternate;
+}
+
+.fp-2 {
+  top: 75%;
+  left: 15%;
+  width: 32px;
+  height: 32px;
+  animation: intro-float-plus-2 16s infinite alternate;
+}
+
+.fp-3 {
+  top: 20%;
+  right: 12%;
+  width: 28px;
+  height: 28px;
+  animation: intro-float-plus-3 18s infinite alternate;
+}
+
+.fp-4 {
+  top: 70%;
+  right: 20%;
+  width: 20px;
+  height: 20px;
+  animation: intro-float-plus-4 15s infinite alternate;
+}
+
+@keyframes intro-float-plus-1 {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 0.03; }
+  100% { transform: translate(30px, -30px) rotate(45deg); opacity: 0.06; }
+}
+
+@keyframes intro-float-plus-2 {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 0.04; }
+  100% { transform: translate(-20px, 40px) rotate(-30deg); opacity: 0.07; }
+}
+
+@keyframes intro-float-plus-3 {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 0.03; }
+  100% { transform: translate(40px, 20px) rotate(90deg); opacity: 0.06; }
+}
+
+@keyframes intro-float-plus-4 {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 0.04; }
+  100% { transform: translate(-30px, -20px) rotate(-45deg); opacity: 0.07; }
+}
+
+/* Tiny Heartbeat Line Particles */
+.heartbeat-decor {
+  position: absolute;
+  stroke: #3150B8;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+  opacity: 0.06;
+  width: 180px;
+  height: 80px;
+}
+
+.hb-1 {
+  top: 40%;
+  left: 5%;
+  animation: intro-heartbeat-glow 7s ease-in-out infinite;
+}
+
+.hb-2 {
+  bottom: 30%;
+  right: 5%;
+  animation: intro-heartbeat-glow 9s ease-in-out infinite alternate;
+}
+
+@keyframes intro-heartbeat-glow {
+  0%, 100% { opacity: 0.03; transform: scale(0.95); }
+  50% { opacity: 0.08; transform: scale(1.02); }
+}
+
+/* Floating subtle dots */
+.floating-particle {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background-color: #3150B8;
+  border-radius: 50%;
+  opacity: 0.08;
+  animation: intro-float-particle-up 12s linear infinite;
+}
+
+.pt-1 { left: 25%; animation-delay: 0s; animation-duration: 16s; }
+.pt-2 { left: 45%; animation-delay: 3s; animation-duration: 20s; }
+.pt-3 { left: 70%; animation-delay: 1s; animation-duration: 18s; }
+.pt-4 { left: 85%; animation-delay: 5s; animation-duration: 14s; }
+
+@keyframes intro-float-particle-up {
+  0% { transform: translateY(110vh) translateX(0); opacity: 0; }
+  10% { opacity: 0.08; }
+  90% { opacity: 0.08; }
+  100% { transform: translateY(-10vh) translateX(50px); opacity: 0; }
+}
+
+/* Main Content Wrapper */
+.intro-content {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: 100%;
+  max-width: 900px;
+  padding: 20px;
+}
+
+/* Logo and Rings Container */
+.logo-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.logo-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 50%;
+  filter: drop-shadow(0 4px 12px rgba(49, 80, 184, 0.15));
+}
+
+@media (min-width: 1024px) {
+  .logo-wrapper { width: 220px; height: 220px; }
+}
+@media (min-width: 640px) and (max-width: 1023px) {
+  .logo-wrapper { width: 180px; height: 180px; }
+}
+@media (max-width: 639px) {
+  .logo-wrapper { width: 140px; height: 140px; }
+}
+
+/* Concentric Rings */
+.ring-outer, .ring-inner {
+  position: absolute;
+  border: 1.5px solid rgba(49, 80, 184, 0.12);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.ring-outer {
+  width: 135%;
+  height: 135%;
+  animation: intro-rotate-ring-outer 15s linear infinite;
+}
+
+.ring-inner {
+  width: 118%;
+  height: 118%;
+  animation: intro-rotate-ring-inner 18s linear infinite;
+}
+
+@keyframes intro-rotate-ring-outer {
+  0% { transform: rotate(0deg) scale(0.97); }
+  50% { transform: rotate(180deg) scale(1.03); }
+  100% { transform: rotate(360deg) scale(0.97); }
+}
+
+@keyframes intro-rotate-ring-inner {
+  0% { transform: rotate(360deg) scale(1.02); }
+  50% { transform: rotate(180deg) scale(0.98); }
+  100% { transform: rotate(0deg) scale(1.02); }
+}
+
+/* Brand Name Styling */
+.intro-brand-name {
+  color: #3150B8;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 12px;
+  text-shadow: 0 4px 20px rgba(49, 80, 184, 0.1);
+  letter-spacing: 0.05em;
+}
+
+@media (min-width: 1024px) {
+  .intro-brand-name { font-size: 80px; }
+}
+@media (min-width: 640px) and (max-width: 1023px) {
+  .intro-brand-name { font-size: 60px; }
+}
+@media (max-width: 639px) {
+  .intro-brand-name { font-size: 42px; }
+}
+
+/* Tagline Styling */
+.intro-tagline {
+  color: #4A6FA5;
+  font-weight: 500;
+  margin-bottom: 32px;
+  letter-spacing: 0.02em;
+}
+
+@media (min-width: 1024px) {
+  .intro-tagline { font-size: 28px; }
+}
+@media (min-width: 640px) and (max-width: 1023px) {
+  .intro-tagline { font-size: 22px; }
+}
+@media (max-width: 639px) {
+  .intro-tagline { font-size: 18px; }
+}
+
+/* Features Pills */
+.intro-pills {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+  max-width: 90%;
+  margin-top: 8px;
+}
+
+.intro-pill {
+  background-color: #EAF4FF;
+  color: #3150B8;
+  font-weight: 600;
+  padding: 10px 22px;
+  border-radius: 9999px;
+  box-shadow: 0 4px 15px rgba(49, 80, 184, 0.06);
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(49, 80, 184, 0.05);
+}
+
+@media (max-width: 639px) {
+  .intro-pill {
+    padding: 8px 16px;
+    font-size: 14px;
+    gap: 6px;
+  }
+  .intro-pills {
+    gap: 10px;
+  }
+}
