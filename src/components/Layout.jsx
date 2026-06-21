@@ -3,6 +3,7 @@ import { useLocation, Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Navbar from './Navbar';
 import Footer from './Footer';
+import AnimatedBackground from './AnimatedBackground';
 
 /**
  * Layout component wraps page content with persistent Navbar and Footer.
@@ -25,18 +26,21 @@ const Layout = ({ children, hideFooter }) => {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
+    <div className="flex flex-col min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 relative">
+      <AnimatedBackground />
       <Navbar />
       {isLanding ? (
-        <main className="flex-grow pt-16">
+        <main className="flex-grow pt-16 relative z-10">
           {children}
         </main>
       ) : (
-        <main className="flex-grow pt-24 pb-12 container mx-auto px-4 max-w-7xl">
+        <main className="flex-grow pt-24 pb-12 container mx-auto px-4 max-w-7xl relative z-10">
           {children}
         </main>
       )}
-      {!hideFooter && <Footer />}
+      <div className="relative z-10">
+        {!hideFooter && <Footer />}
+      </div>
     </div>
   );
 };

@@ -1,0 +1,177 @@
+/* AnimatedBackground.css */
+
+.animated-bg-root {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 0; /* Placed behind all sections */
+  overflow: hidden;
+  background-color: #FFFFFF;
+}
+
+/* Layer absolute containers for parallax translation */
+.bg-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 120%; /* Extra height to accommodate scroll translation without clipping */
+  pointer-events: none;
+  will-change: transform;
+}
+
+/* LAYER 1: Soft flowing blue waves */
+.layer-waves {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 400px;
+  overflow: hidden;
+  opacity: 0.6;
+}
+
+.wave-svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* LAYER 2: ECG heartbeat lines travelling left to right */
+.layer-ecg-container {
+  position: absolute;
+  width: 100%;
+  height: 120px;
+  pointer-events: none;
+}
+
+.ecg-svg-path {
+  stroke: #3F74E7;
+  stroke-width: 1.75px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+  stroke-dasharray: 2000;
+  stroke-dashoffset: 2000;
+  animation: travel-ecg-stroke 10s linear infinite;
+}
+
+@keyframes travel-ecg-stroke {
+  0% { stroke-dashoffset: 2000; opacity: 0; }
+  10% { opacity: 0.04; }
+  90% { opacity: 0.04; }
+  100% { stroke-dashoffset: -2000; opacity: 0; }
+}
+
+/* LAYER 3: Medical cross symbols slowly drifting, rotating, and fading */
+.floating-cross-element {
+  position: absolute;
+  color: #3F74E7;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  opacity: 0.03;
+  will-change: transform, opacity;
+}
+
+.cross-drift-1 { animation: cross-drift-key 20s ease-in-out infinite; }
+.cross-drift-2 { animation: cross-drift-key-alt 24s ease-in-out infinite; }
+.cross-drift-3 { animation: cross-drift-key 28s ease-in-out infinite; }
+
+@keyframes cross-drift-key {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+  15% { opacity: 0.035; }
+  85% { opacity: 0.035; }
+  100% { transform: translate(60px, -120px) rotate(120deg); opacity: 0; }
+}
+
+@keyframes cross-drift-key-alt {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+  20% { opacity: 0.03; }
+  80% { opacity: 0.03; }
+  100% { transform: translate(-60px, -90px) rotate(-90deg); opacity: 0; }
+}
+
+/* LAYER 4: Floating outline healthcare icons */
+.ambient-outline-icon {
+  position: absolute;
+  color: #3150B8;
+  opacity: 0.04;
+  will-change: transform, opacity;
+}
+
+.icon-float-1 { animation: icon-float-anim-1 30s ease-in-out infinite alternate; }
+.icon-float-2 { animation: icon-float-anim-2 34s ease-in-out infinite alternate; }
+.icon-float-3 { animation: icon-float-anim-3 32s ease-in-out infinite alternate; }
+
+@keyframes icon-float-anim-1 {
+  0% { transform: translate(0, 0) rotate(0deg) scale(1); opacity: 0.03; }
+  50% { transform: translate(40px, -30px) rotate(8deg) scale(1.04); opacity: 0.05; }
+  100% { transform: translate(-10px, 40px) rotate(-4deg) scale(0.97); opacity: 0.03; }
+}
+
+@keyframes icon-float-anim-2 {
+  0% { transform: translate(0, 0) rotate(0deg) scale(0.96); opacity: 0.04; }
+  50% { transform: translate(-30px, 35px) rotate(-10deg) scale(1.05); opacity: 0.06; }
+  100% { transform: translate(20px, -20px) rotate(6deg) scale(0.98); opacity: 0.04; }
+}
+
+@keyframes icon-float-anim-3 {
+  0% { transform: translate(0, 0) rotate(0deg) scale(1.02); opacity: 0.03; }
+  50% { transform: translate(35px, 20px) rotate(12deg) scale(0.95); opacity: 0.05; }
+  100% { transform: translate(-40px, -35px) rotate(-8deg) scale(1.03); opacity: 0.03; }
+}
+
+/* LAYER 5: Canvas healthcare connection network ecosystem */
+.layer-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* LAYER 6: Soft radial glows expanding/contracting */
+.glow-blob-layer-item {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(140px);
+  pointer-events: none;
+  mix-blend-mode: multiply;
+  opacity: 0.06;
+  will-change: transform, opacity;
+}
+
+.glow-item-1 {
+  width: 650px;
+  height: 650px;
+  background: radial-gradient(circle, rgba(221, 235, 255, 0.6) 0%, rgba(221, 235, 255, 0) 70%);
+  animation: glow-pulse-scale-1 16s ease-in-out infinite alternate;
+}
+
+.glow-item-2 {
+  width: 550px;
+  height: 550px;
+  background: radial-gradient(circle, rgba(223, 248, 245, 0.5) 0%, rgba(223, 248, 245, 0) 75%);
+  animation: glow-pulse-scale-2 20s ease-in-out infinite alternate;
+}
+
+.glow-item-3 {
+  width: 450px;
+  height: 450px;
+  background: radial-gradient(circle, rgba(234, 244, 255, 0.4) 0%, rgba(234, 244, 255, 0) 80%);
+  animation: glow-pulse-scale-1 18s ease-in-out infinite alternate;
+}
+
+@keyframes glow-pulse-scale-1 {
+  0% { transform: scale(1) translate(0, 0); opacity: 0.04; }
+  100% { transform: scale(1.2) translate(50px, -40px); opacity: 0.07; }
+}
+
+@keyframes glow-pulse-scale-2 {
+  0% { transform: scale(1.15) translate(0, 0); opacity: 0.05; }
+  100% { transform: scale(0.9) translate(-60px, 50px); opacity: 0.08; }
+}

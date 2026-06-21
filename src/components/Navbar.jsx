@@ -7,6 +7,19 @@ const Navbar = () => {
   const [open, setOpen] = useState(false);
   const { user, isAuthenticated, logout, profile } = useAuth();
   const navigate = useNavigate();
+  const [scrolled, setScrolled] = useState(false);
+
+  React.useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 10) {
+        setScrolled(true);
+      } else {
+        setScrolled(false);
+      }
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const handleLogout = async () => {
     await logout();
@@ -15,9 +28,13 @@ const Navbar = () => {
 
   const toggleMenu = () => setOpen(!open);
 
-    return (
-      <nav className="fixed top-0 left-0 right-0 bg-white bg-opacity-80 backdrop-blur-md shadow-md border-b border-gray-200 z-50">
-        <div className="max-w-7xl mx-auto flex items-center justify-between px-4 py-3">
+  return (
+    <nav className={`fixed top-0 left-0 right-0 z-50 border-b border-slate-200 transition-all duration-300 ${
+      scrolled 
+        ? 'bg-white bg-opacity-95 backdrop-blur-[10px] shadow-md py-2' 
+        : 'bg-white bg-opacity-80 backdrop-blur-md shadow-sm py-3.5'
+    }`}>
+      <div className="max-w-7xl mx-auto flex items-center justify-between px-4">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2 text-primary">
             <img src="/assets/logo.png" alt="Vanitha Clinic logo" className="h-8 w-auto rounded-full" />

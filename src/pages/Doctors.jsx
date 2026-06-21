@@ -5,6 +5,7 @@ import DoctorCard from '../components/DoctorCard';
 import { AlertCircle, Users, RefreshCw } from 'lucide-react';
 import doctorsData from '../data/doctors';
 import { getDocsWithTimeout } from '../utils/firestoreHelper';
+import { ScrollReveal, StaggerContainer } from '../components/ScrollReveal';
 
 const DoctorSkeleton = () => (
   <div className="bg-white rounded-2xl border border-slate-100 p-6 space-y-4 animate-pulse">
@@ -86,24 +87,27 @@ const Doctors = () => {
     fetchDoctors();
   }, []);
 
-
   return (
     <div className="container mx-auto max-w-7xl py-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-slate-800 tracking-tight">Our Specialists</h1>
-          <p className="text-sm text-slate-500 mt-1">Browse and book appointments with our medical professionals</p>
+      
+      {/* Header Block */}
+      <ScrollReveal direction="up" duration={0.6}>
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-slate-800 tracking-tight">Our Specialists</h1>
+            <p className="text-sm text-slate-500 mt-1">Browse and book appointments with our medical professionals</p>
+          </div>
+          {error && (
+            <button 
+              onClick={fetchDoctors}
+              className="flex items-center space-x-1 px-4 py-2 bg-slate-100 text-slate-700 rounded-xl font-semibold hover:bg-slate-200 transition-colors text-sm border border-slate-200"
+            >
+              <RefreshCw size={16} />
+              <span>Retry</span>
+            </button>
+          )}
         </div>
-        {error && (
-          <button 
-            onClick={fetchDoctors}
-            className="flex items-center space-x-1 px-4 py-2 bg-slate-100 text-slate-700 rounded-xl font-semibold hover:bg-slate-200 transition-colors text-sm border border-slate-200"
-          >
-            <RefreshCw size={16} />
-            <span>Retry</span>
-          </button>
-        )}
-      </div>
+      </ScrollReveal>
 
       {loading ? (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -134,11 +138,15 @@ const Doctors = () => {
           <p className="text-sm text-slate-500">There are no doctors registered in the database at the moment.</p>
         </div>
       ) : (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {doctors.map(doctor => (
-            <DoctorCard key={doctor.id} doctor={doctor} />
-          ))}
-        </div>
+        <StaggerContainer staggerDelay={0.15}>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {doctors.map(doctor => (
+              <ScrollReveal key={doctor.id} direction="up" duration={0.6}>
+                <DoctorCard doctor={doctor} />
+              </ScrollReveal>
+            ))}
+          </div>
+        </StaggerContainer>
       )}
     </div>
   );
