@@ -2,30 +2,30 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { db } from '../firebase';
-import { 
-  collection, 
+import {
+  collection,
   getDoc,
-  doc, 
-  addDoc, 
-  query, 
-  where, 
-  runTransaction, 
-  serverTimestamp 
+  doc,
+  addDoc,
+  query,
+  where,
+  runTransaction,
+  serverTimestamp
 } from 'firebase/firestore';
 import { getDocsWithTimeout, addDocWithTimeout, runTransactionWithTimeout } from '../utils/firestoreHelper';
 import { loadRazorpayScript, openRazorpayCheckout } from '../utils/razorpay';
 import { jsPDF } from 'jspdf';
 import LoadingSpinner from '../components/LoadingSpinner';
 import doctorsData from '../data/doctors';
-import { 
-  User, 
-  Calendar, 
-  Ticket, 
-  CreditCard, 
-  CheckCircle, 
-  ArrowRight, 
-  ArrowLeft, 
-  Download, 
+import {
+  User,
+  Calendar,
+  Ticket,
+  CreditCard,
+  CheckCircle,
+  ArrowRight,
+  ArrowLeft,
+  Download,
   AlertCircle,
   CheckCircle2,
   Lock,
@@ -45,7 +45,7 @@ const BookAppointment = () => {
   const [error, setError] = useState(null);
 
   // Data States
-  const [doctors, setDoctors] = useState(() => 
+  const [doctors, setDoctors] = useState(() =>
     doctorsData.map((d, index) => ({ id: `local_doc_${index + 1}`, ...d }))
   );
   const [selectedDoctor, setSelectedDoctor] = useState(null);
@@ -53,7 +53,7 @@ const BookAppointment = () => {
   const [selectedSlot, setSelectedSlot] = useState('');
   const [bookedSlots, setBookedSlots] = useState([]);
   const [fetchingSlots, setFetchingSlots] = useState(false);
-  
+
   // Token & Payment States
   const [tokenNumber, setTokenNumber] = useState('');
   const [estimatedWait, setEstimatedWait] = useState(0);
@@ -66,11 +66,33 @@ const BookAppointment = () => {
 
   // Time slots template
   const timeSlots = [
-    '09:00 AM', '09:30 AM', '10:00 AM', '10:30 AM', 
+    '09:00 AM', '09:30 AM', '10:00 AM', '10:30 AM',
     '11:00 AM', '11:30 AM', '12:00 PM', '12:30 PM',
-    '02:00 PM', '02:30 PM', '03:00 PM', '03:30 PM', 
+    '02:00 PM', '02:30 PM', '03:00 PM', '03:30 PM',
     '04:00 PM', '04:30 PM'
   ];
+  const isPastTimeSlot = (slot) => {
+    if (!selectedDate) return false;
+
+    const today = new Date();
+    const appointmentDate = new Date(selectedDate);
+
+    // Only check time if the selected date is today
+    if (appointmentDate.toDateString() !== today.toDateString()) {
+      return false;
+    }
+
+    const [time, period] = slot.split(" ");
+    let [hours, minutes] = time.split(":").map(Number);
+
+    if (period === "PM" && hours !== 12) hours += 12;
+    if (period === "AM" && hours === 12) hours = 0;
+
+    const slotDate = new Date(appointmentDate);
+    slotDate.setHours(hours, minutes, 0, 0);
+
+    return slotDate <= today;
+  };
 
   // Get earliest available date for a doctor based on day & current time
   const getEarliestAvailableDate = (doctor) => {
@@ -251,10 +273,10 @@ const BookAppointment = () => {
         nextTokenVal = await runTransactionWithTimeout(db, async (transaction) => {
           const tokenDoc = await transaction.get(tokenRef);
           if (!tokenDoc.exists()) {
-            transaction.set(tokenRef, { 
-              lastNumber: 101, 
-              date: selectedDate, 
-              doctorId: selectedDoctor.id 
+            transaction.set(tokenRef, {
+              lastNumber: 101,
+              date: selectedDate,
+              doctorId: selectedDoctor.id
             });
             return 101;
           } else {
@@ -625,32 +647,29 @@ const BookAppointment = () => {
             <React.Fragment key={s.id}>
               {/* Step Circle */}
               <div className="flex flex-col items-center relative z-10">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300 font-semibold text-sm ${
-                  step === s.id 
-                    ? 'bg-primary text-white border-primary shadow-md shadow-primary/30 scale-110'
-                    : step > s.id 
-                      ? 'bg-emerald-500 text-white border-emerald-500'
-                      : 'bg-white text-slate-400 border-slate-200'
-                }`}>
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300 font-semibold text-sm ${step === s.id
+                  ? 'bg-primary text-white border-primary shadow-md shadow-primary/30 scale-110'
+                  : step > s.id
+                    ? 'bg-emerald-500 text-white border-emerald-500'
+                    : 'bg-white text-slate-400 border-slate-200'
+                  }`}>
                   {step > s.id ? <CheckCircle size={16} /> : s.icon}
                 </div>
-                <span className={`text-[10px] font-bold mt-1.5 uppercase tracking-wider ${
-                  step === s.id ? 'text-primary' : step > s.id ? 'text-emerald-600' : 'text-slate-400'
-                }`}>
+                <span className={`text-[10px] font-bold mt-1.5 uppercase tracking-wider ${step === s.id ? 'text-primary' : step > s.id ? 'text-emerald-600' : 'text-slate-400'
+                  }`}>
                   {s.label}
                 </span>
               </div>
-              
+
               {/* Connector Line */}
               {idx < steps.length - 1 && (
                 <div className="flex-1 h-0.5 mx-2 bg-slate-100 relative">
-                  <div className={`absolute top-0 left-0 h-full bg-gradient-to-r transition-all duration-500 ${
-                    step > s.id 
-                      ? 'w-full from-emerald-500 to-emerald-500' 
-                      : step === s.id 
-                        ? 'w-1/2 from-primary to-slate-200' 
-                        : 'w-0'
-                  }`} />
+                  <div className={`absolute top-0 left-0 h-full bg-gradient-to-r transition-all duration-500 ${step > s.id
+                    ? 'w-full from-emerald-500 to-emerald-500'
+                    : step === s.id
+                      ? 'w-1/2 from-primary to-slate-200'
+                      : 'w-0'
+                    }`} />
                 </div>
               )}
             </React.Fragment>
@@ -686,7 +705,7 @@ const BookAppointment = () => {
 
       {/* Main Form Box */}
       <div className="bg-white rounded-3xl border border-slate-100 shadow-xl p-6 md:p-8 relative min-h-[400px] transition-all duration-300">
-        
+
         {loading && (
           <div className="absolute inset-0 bg-white/70 backdrop-blur-sm rounded-3xl flex items-center justify-center z-50 transition-opacity">
             <div className="flex flex-col items-center space-y-3">
@@ -713,19 +732,18 @@ const BookAppointment = () => {
             ) : (
               <div className="grid gap-6 md:grid-cols-2">
                 {doctors.map(docData => (
-                  <div 
-                    key={docData.id} 
-                    className={`bg-white rounded-2xl border p-5 flex flex-col justify-between transition-all relative overflow-hidden ${
-                      selectedDoctor?.id === docData.id 
-                        ? 'border-primary ring-2 ring-primary/10 shadow-md' 
-                        : 'border-slate-100 hover:border-slate-200 hover:shadow-sm'
-                    }`}
+                  <div
+                    key={docData.id}
+                    className={`bg-white rounded-2xl border p-5 flex flex-col justify-between transition-all relative overflow-hidden ${selectedDoctor?.id === docData.id
+                      ? 'border-primary ring-2 ring-primary/10 shadow-md'
+                      : 'border-slate-100 hover:border-slate-200 hover:shadow-sm'
+                      }`}
                   >
                     <div className="flex items-start space-x-4">
                       {docData.image ? (
-                        <img 
-                          src={docData.image} 
-                          alt={docData.name} 
+                        <img
+                          src={docData.image}
+                          alt={docData.name}
                           className="w-16 h-16 rounded-xl object-cover border border-slate-100 shadow-sm"
                           onError={(e) => {
                             e.target.style.display = 'none';
@@ -733,7 +751,7 @@ const BookAppointment = () => {
                           }}
                         />
                       ) : null}
-                      <div 
+                      <div
                         className="w-16 h-16 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl text-primary flex flex-col items-center justify-center border border-slate-100 shadow-sm"
                         style={{ display: docData.image ? 'none' : 'flex' }}
                       >
@@ -750,12 +768,12 @@ const BookAppointment = () => {
                         </p>
                       </div>
                     </div>
-                    
+
                     <div className="mt-5 pt-3 border-t border-slate-50 flex items-center justify-between">
                       <div className="text-xs text-slate-500">
                         <span className="font-semibold text-slate-800 text-sm">₹{docData.fee || 500}</span> fee
                       </div>
-                      <button 
+                      <button
                         onClick={() => {
                           setSelectedDoctor(docData);
                           setSelectedDate(getEarliestAvailableDate(docData));
@@ -782,8 +800,8 @@ const BookAppointment = () => {
                 <h2 className="text-xl font-bold text-slate-800">Step 2 - Select Date & Time Slot</h2>
                 <p className="text-xs text-slate-400 mt-0.5">Select a schedule for {selectedDoctor.name}</p>
               </div>
-              <button 
-                onClick={() => setStep(1)} 
+              <button
+                onClick={() => setStep(1)}
                 className="flex items-center space-x-1 text-xs text-slate-500 hover:text-slate-700 transition"
               >
                 <ArrowLeft size={14} />
@@ -803,16 +821,16 @@ const BookAppointment = () => {
               {/* Date Selection Box */}
               <div className="md:col-span-1 space-y-2">
                 <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider">Appointment Date</label>
-                <input 
-                  type="date" 
-                  value={selectedDate} 
+                <input
+                  type="date"
+                  value={selectedDate}
                   onChange={(e) => {
                     setSelectedDate(e.target.value);
                     setSelectedSlot(''); // Reset slot on date change
                   }}
                   min={new Date().toISOString().split('T')[0]} // Block yesterday
-                  required 
-                  className="w-full p-3 border border-slate-200 rounded-xl text-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary shadow-sm" 
+                  required
+                  className="w-full p-3 border border-slate-200 rounded-xl text-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary shadow-sm"
                 />
               </div>
 
@@ -839,19 +857,19 @@ const BookAppointment = () => {
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                       {timeSlots.map(slot => {
                         const isBooked = bookedSlots.includes(slot);
+                        const isPast = isPastTimeSlot(slot);
                         const isSelected = selectedSlot === slot;
                         return (
                           <button
                             key={slot}
-                            disabled={isBooked}
+                            disabled={isBooked || isPast}
                             onClick={() => handleSelectSlot(slot)}
-                            className={`p-2.5 rounded-xl border text-xs font-semibold tracking-wide transition-all ${
-                              isBooked 
-                                ? 'bg-slate-100 border-slate-200 text-slate-400 line-through cursor-not-allowed'
-                                : isSelected
-                                  ? 'bg-primary text-white border-primary shadow-md shadow-primary/20 scale-[1.02]'
-                                  : 'bg-white border-slate-100 text-slate-600 hover:border-slate-300 hover:bg-slate-50'
-                            }`}
+                            className={`p-2.5 rounded-xl border text-xs font-semibold tracking-wide transition-all ${(isBooked || isPast)
+                              ? 'bg-slate-100 border-slate-200 text-slate-400 line-through cursor-not-allowed'
+                              : isSelected
+                                ? 'bg-primary text-white border-primary shadow-md shadow-primary/20 scale-[1.02]'
+                                : 'bg-white border-slate-100 text-slate-600 hover:border-slate-300 hover:bg-slate-50'
+                              }`}
                           >
                             {slot}
                           </button>
@@ -885,8 +903,8 @@ const BookAppointment = () => {
                 <h2 className="text-xl font-bold text-slate-800">Step 3 - Token Generated</h2>
                 <p className="text-xs text-slate-400 mt-0.5">Your queuing position details</p>
               </div>
-              <button 
-                onClick={() => setStep(2)} 
+              <button
+                onClick={() => setStep(2)}
                 className="flex items-center space-x-1 text-xs text-slate-500 hover:text-slate-700 transition"
               >
                 <ArrowLeft size={14} />
@@ -898,7 +916,7 @@ const BookAppointment = () => {
             <div className="max-w-2xl mx-auto bg-white border border-slate-200 shadow-xl relative mt-4">
               {/* Top accent bar */}
               <div className="h-2 w-full bg-primary" />
-              
+
               <div className="p-8">
                 {/* Header Section */}
                 <div className="flex flex-col sm:flex-row justify-between items-start border-b-2 border-slate-100 pb-6 mb-6">
@@ -969,9 +987,9 @@ const BookAppointment = () => {
                     {tokenNumber}
                   </div>
                 </div>
-                
+
               </div>
-              
+
               {/* Receipt Footer Line */}
               <div className="bg-slate-50 border-t border-slate-200 p-4 text-center">
                 <p className="text-[10px] text-slate-400 font-medium">* This token is for queuing purposes. Final receipt will be generated after payment.</p>
@@ -1007,8 +1025,8 @@ const BookAppointment = () => {
                 <h2 className="text-xl font-bold text-slate-800">Step 4 - Payment Options</h2>
                 <p className="text-xs text-slate-400 mt-0.5">Settle consultation invoice to lock the queue slot</p>
               </div>
-              <button 
-                onClick={() => setStep(3)} 
+              <button
+                onClick={() => setStep(3)}
                 className="flex items-center space-x-1 text-xs text-slate-500 hover:text-slate-700 transition"
               >
                 <ArrowLeft size={14} />
@@ -1020,7 +1038,7 @@ const BookAppointment = () => {
               {/* Payment Summary Sheet */}
               <div className="md:col-span-3 border border-slate-100 rounded-2xl p-5 space-y-4 shadow-sm bg-slate-50/50">
                 <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wide border-b border-slate-100 pb-2">Appointment Summary</h3>
-                
+
                 <div className="space-y-2 text-xs text-slate-600">
                   <div className="flex justify-between">
                     <span>Doctor</span>
@@ -1065,21 +1083,20 @@ const BookAppointment = () => {
               <div className="md:col-span-2 space-y-4">
                 <div>
                   <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">Select Method</label>
-                  
+
                   <div className="space-y-2">
                     {['UPI', 'Card', 'Cash'].map(method => (
-                      <label 
+                      <label
                         key={method}
-                        className={`flex items-center space-x-3 p-3.5 border rounded-xl cursor-pointer transition-all ${
-                          paymentMethod === method 
-                            ? 'border-primary bg-blue-50/20 text-primary font-semibold ring-2 ring-primary/5' 
-                            : 'border-slate-100 hover:border-slate-200 text-slate-600'
-                        }`}
+                        className={`flex items-center space-x-3 p-3.5 border rounded-xl cursor-pointer transition-all ${paymentMethod === method
+                          ? 'border-primary bg-blue-50/20 text-primary font-semibold ring-2 ring-primary/5'
+                          : 'border-slate-100 hover:border-slate-200 text-slate-600'
+                          }`}
                       >
-                        <input 
-                          type="radio" 
-                          name="paymentMethod" 
-                          value={method} 
+                        <input
+                          type="radio"
+                          name="paymentMethod"
+                          value={method}
                           checked={paymentMethod === method}
                           onChange={(e) => setPaymentMethod(e.target.value)}
                           className="text-primary focus:ring-primary"
@@ -1134,7 +1151,7 @@ const BookAppointment = () => {
                     ) : (
                       <>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                          <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 4.5l4.5 7.5H12V4.5zm0 15l-4.5-7.5H12V19.5z"/>
+                          <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 4.5l4.5 7.5H12V4.5zm0 15l-4.5-7.5H12V19.5z" />
                         </svg>
                         <span>Pay Now · Razorpay</span>
                       </>
@@ -1156,7 +1173,7 @@ const BookAppointment = () => {
         {/* STEP 5: APPOINTMENT CONFIRMATION */}
         {step === 5 && confirmedAppointment && (
           <div className="space-y-8 text-center max-w-xl mx-auto py-4">
-            
+
             {/* Animated Celebration Icon */}
             <div className="inline-flex p-3 bg-emerald-50 text-emerald-600 rounded-full border border-emerald-100 shadow-inner scale-110 mb-2 animate-bounce">
               <CheckCircle2 size={48} className="stroke-[2.5]" />
@@ -1197,11 +1214,10 @@ const BookAppointment = () => {
                 </div>
                 <div className="flex justify-between">
                   <span>Payment Status</span>
-                  <span className={`inline-flex px-2 py-0.5 rounded font-bold uppercase tracking-wider text-[9px] ${
-                    confirmedAppointment.status === 'paid' 
-                      ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' 
-                      : 'bg-amber-50 text-amber-600 border border-amber-100'
-                  }`}>
+                  <span className={`inline-flex px-2 py-0.5 rounded font-bold uppercase tracking-wider text-[9px] ${confirmedAppointment.status === 'paid'
+                    ? 'bg-emerald-50 text-emerald-600 border border-emerald-100'
+                    : 'bg-amber-50 text-amber-600 border border-amber-100'
+                    }`}>
                     {confirmedAppointment.status === 'paid' ? 'PAID ONLINE' : 'PAY AT CLINIC'}
                   </span>
                 </div>
@@ -1217,7 +1233,7 @@ const BookAppointment = () => {
                 <Download size={14} />
                 <span>Download Receipt</span>
               </button>
-              
+
               <button
                 onClick={() => navigate('/my-appointments')}
                 className="px-6 py-3 bg-primary text-white text-xs font-bold rounded-xl hover:bg-primary-dark transition shadow-md shadow-primary/20"
