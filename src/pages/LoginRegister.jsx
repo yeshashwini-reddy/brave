@@ -90,7 +90,7 @@ const LoginRegister = () => {
     setError('');
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:5000/send-otp', {
+      const response = await fetch('https://brave-fplv.onrender.com/send-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email })
@@ -170,7 +170,7 @@ const LoginRegister = () => {
         else window.location.href = '/patient-dashboard';
       } else {
         if (!showOtpScreen) {
-          const response = await fetch('http://localhost:5000/send-otp', {
+          const response = await fetch('https://brave-fplv.onrender.com/send-otp', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email })
@@ -192,7 +192,7 @@ const LoginRegister = () => {
             throw new Error('Please enter all 6 digits of the OTP.');
           }
           
-          const verifyResponse = await fetch('http://localhost:5000/verify-otp', {
+          const verifyResponse = await fetch('https://brave-fplv.onrender.com/verify-otp', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, otp: otpString })
